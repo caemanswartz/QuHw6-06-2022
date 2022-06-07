@@ -1,26 +1,26 @@
-@page "/login"
+@page "/register"
 @inject HttpClient Http
 @inject AuthenticationStateProvider AuthStateProvider
 @inject ILocalStorageService LocalStorage
-<h3>Login</h3>
-<EditForm Model="user" OnSubmit="HandleLogin">
+@inject NavigationManager NavigationManager
+<h3>Register</h3>
+<EditForm Model="user" OnSubmit="HandleRegister">
     <label for="username">Name</label>
     <InputText id="username" @bind-Value="user.Username"/>
     <label for="password">Password</label>
     <InputText id="password" @bind-Value="user.Password" type="password"/>
-    <button type="submit" class="btn btn-primary">Login</button>
+    <button type="submit" class="btn btn-primary">Register</button>
 </EditForm>
 @code{
     UserDto user=new UserDto();
-    async Task HandleLogin()
+    async Task HandleRegister()
     {
-        var result=await Http.PostAsJsonAsync("api/Auth/login",user);
+        var result=await Http.PostAsJsonAsync("api/Auth/register",user);
         var token=await result.Content.ReadAsStringAsync();
         if(!result.IsSuccessStatusCode)
             Console.WriteLine($"Error: {result.ReasonPhrase}, {token}");
         else {
-            await LocalStorage.SetItemAsync("token",token);
-            await AuthStateProvider.GetAuthenticationStateAsync();
+            NavigationManager.NavigateTo("/");
         }
     }
 }
